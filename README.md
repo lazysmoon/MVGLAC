@@ -71,7 +71,7 @@ python train.py \
     --num-agents 8 \
     --obs 8 \
     --area-size 4 \
-    --seed 2
+    --seed 0
 ```
 
 Logs, the merged config (`config.yaml`), and checkpoints are saved under
@@ -120,12 +120,7 @@ The multi-agent safe navigation problem is formulated as a **Constrained Markov 
 
 **Lyapunov critic and UUB stability.** A centralized Lyapunov critic is trained to approximate the cumulative discounted safety cost. A data-driven drift condition is derived that guarantees the closed-loop multi-agent system is **uniformly ultimately bounded** with respect to the global safety cost. The global condition is decoupled into per-agent local constraints, so the stability guarantee is enforced through purely local supervision.
 
-**Adaptive Lagrangian optimization.** The Lyapunov stability condition is combined with a maximum-entropy SAC-style objective via Lagrangian duality. Both the Lagrangian multiplier and the entropy temperature are auto-tuned by dual ascent, removing the need for manual safety/task weight tuning.
-
-<p align="center">
-  <img src="assets/lyapunov_field.png" width="420" alt="Learned Lyapunov safety field"/>
-</p>
-<p align="center"><i>Figure 2. Visualization of the learned Lyapunov safety field around agent 0. Warmer colors indicate higher predicted Lyapunov value (higher collision risk).</i></p>
+**Adaptive Lagrangian optimization.** The Lyapunov stability condition is combined with a maximum-entropy objective via Lagrangian duality. Both the Lagrangian multiplier and the entropy temperature are auto-tuned by dual ascent, removing the need for manual safety/task weight tuning.
 
 ---
 
@@ -138,7 +133,7 @@ The multi-agent safe navigation problem is formulated as a **Constrained Markov 
 </p>
 <p align="center"><i>Figure 3. Training curves of MAGLAC under three configurations (3 / 8 / 10 agents).</i></p>
 
-MAGLAC stabilizes near a mean reward of **~140** across all three settings, and reaches this level within the first 20% of training.
+MAGLAC stabilizes near a mean reward of **140** across all three settings, and reaches this level within the first 20% of training.
 
 ### Zero-shot scaling and generalization
 
@@ -147,7 +142,7 @@ MAGLAC stabilizes near a mean reward of **~140** across all three settings, and 
 </p>
 <p align="center"><i>Figure 4. Zero-shot scaling. Top: collision rate (left) and success rate (right) vs. number of agents (N_obs = 0). Bottom: same metrics vs. number of obstacles (N = 48).</i></p>
 
-A policy trained at `N = 8, N_obs = 8` is evaluated zero-shot on much larger workspaces ($L = 8$ m).
+A policy trained at `N = 8, N_obs = 8` is evaluated zero-shot on different workspaces ($L = 8$ m).
 
 - **Agent-crowding family** (`N_obs = 0`, `N ∈ {32, 48, 64, 80, 96}`): MAGLAC keeps collisions below 6% across all populations and sustains a success rate above 87% even at `N = 96`.
 - **Obstacle-density family** (`N = 48`, `N_obs ∈ {8, 12, 16, 20, 24}`): MAGLAC maintains collision rate below 4% and success rate above 76% across all obstacle densities.
